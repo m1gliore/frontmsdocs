@@ -213,7 +213,6 @@ const UserProfile: React.FC = () => {
                 }
             })
                 .then((res) => {
-                    console.log(res.data.content)
                     setTasksInWait(res.data.content)
                 })
             await axios.get("http://localhost:8080/api/tasks/execute", {
@@ -261,7 +260,6 @@ const UserProfile: React.FC = () => {
             }
         })
             .then((res) => {
-                console.log(res.data)
                 setAllStatistic(res.data)
             })
 
@@ -426,7 +424,7 @@ const UserProfile: React.FC = () => {
                     {})
                 .then(() => navigate(0))
         } catch (error) {
-            console.error(error)
+            alert(error)
         }
     };
 

@@ -128,12 +128,10 @@ const UserProfile: React.FC = () => {
                 .then((res) => setDocuments(res.data))
             await axios.get(`http://localhost:8080/api/nodes/wait-task-nodes/${JSON.parse(user as string).id}`)
                 .then((res) => {
-                    console.log(res.data)
                     setTaskNodesInWait(res.data.content)
                 })
             await axios.get(`http://localhost:8080/api/nodes/execute/${JSON.parse(user as string).id}`)
                 .then((res) => {
-                    console.log(res.data)
                     setTaskNodesInExecute(res.data.content)
                 })
             await axios.get(`http://localhost:8080/api/nodes/done-task-nodes/${JSON.parse(user as string).id}`)

@@ -249,7 +249,7 @@ const DocumentPage: React.FC = () => {
                             }
                         }).then(() => navigate(0))
             } catch (error) {
-                console.error(error)
+                alert(error)
             }
         }
     }
