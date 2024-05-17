@@ -202,6 +202,7 @@ const UserProfile: React.FC = () => {
     const [editingUserId, setEditingUserId] = useState<number | null>(null)
     const [documentId, setDocumentId] = useState<number>(0)
     const [taskId, setTaskId] = useState<number>(0)
+    const [userInfo, setUserInfo] = useState<User>()
 
     useEffect(() => {
         (async () => {
@@ -244,6 +245,11 @@ const UserProfile: React.FC = () => {
             await axios.get("http://localhost:8080/api/users/getAll")
                 .then((res) => {
                     setUsers(res.data)
+                })
+
+            await axios.get(`http://localhost:8080/api/users/${JSON.parse(user as string)?.id}`)
+                .then((res) => {
+                    setUserInfo(res.data)
                 })
         })()
     }, [user])
@@ -431,8 +437,8 @@ const UserProfile: React.FC = () => {
     return (
         <Container>
             <LeftContainer>
-                {/*{JSON.parse(user as string)?.username}*/}
-                <Title>Пользователь: Буяков Никита Александрович, Отдел кадров, Кадровик, rain228322</Title>
+                <Title>Пользователь: {userInfo?.employeeDTO.surname + " " + userInfo?.employeeDTO.name + " "
+                    + userInfo?.employeeDTO.patronymic + "\nИмя пользователя: " + userInfo?.username}</Title>
                 Задачи
                 <TaskAltOutlined style={{cursor: "pointer"}} fontSize="large" onClick={() => setPanel("tasks")}/>
                 Статистика

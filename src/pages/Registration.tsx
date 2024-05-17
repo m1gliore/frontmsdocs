@@ -89,6 +89,8 @@ const Registration: React.FC = () => {
             formData.append("employeeDTO.name", name)
             formData.append("employeeDTO.surname", surname)
             formData.append("employeeDTO.patronymic", patronymic)
+            // @ts-ignore
+            formData.append("isActive", true)
 
             try {
                 await axios.post('http://localhost:8080/api/users/registrationNewUser', formData, {

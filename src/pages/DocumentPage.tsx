@@ -184,6 +184,15 @@ const Select = styled.select`
   margin-bottom: 2vw;
 `
 
+const InputNew = styled.input`
+  width: 21vw;
+  height: 5vh;
+  margin-bottom: 2vw;
+  border: 1px solid #ddd;
+  padding: .5vw;
+  border-radius: 6px;
+`
+
 const DocumentPage: React.FC = () => {
 
     const [modalActive, setModalActive] = useState<boolean>(false)
@@ -201,6 +210,8 @@ const DocumentPage: React.FC = () => {
     const [user,] = useLocalStorage<string>("user")
     const [archievedDocs, setArchievedDocs] = useState<Array<Document>>([])
     const [currentDocumentState, setCurrentDocumentState] = useState<string>("docs")
+    const [uniqueNumber, setUniqueNumber] = useState<string>('');
+    const [eDocumentType, setEDocumentType] = useState<string>('');
 
     useEffect(() => {
         if (user) {
@@ -235,7 +246,9 @@ const DocumentPage: React.FC = () => {
             formData.append('fileName', selectedFile.name)
             formData.append('file', selectedFile)
             formData.append('id_employee_publisher', JSON.parse(user as string)?.id)
-            formData.append('eDocumentType', "Накладная")
+            formData.append('eDocumentType', eDocumentType)
+            formData.append('uniqueNumber', uniqueNumber)
+
             try {
                 const response = await axios.create({
                     headers: {
@@ -263,6 +276,8 @@ const DocumentPage: React.FC = () => {
         formData.append("fileName", JSON.parse(documentData as string).fileName)
         formData.append("fileDirectory", JSON.parse(documentData as string).fileDirectory)
         formData.append("comment", "mamas")
+        formData.append('eDocumentType', eDocumentType)
+        formData.append('uniqueNumber', uniqueNumber)
 
         const file = new Blob([editorValue], {type: "text/html"})
 
@@ -285,6 +300,8 @@ const DocumentPage: React.FC = () => {
             formData.append('fileName', selectedFile.name)
             formData.append('file', selectedFile)
             formData.append('id_employee_publisher', "4")
+            formData.append('eDocumentType', eDocumentType)
+            formData.append('uniqueNumber', uniqueNumber)
 
             try {
                 await axios.put('http://localhost:8080/api/documents/update_document',
@@ -328,6 +345,22 @@ const DocumentPage: React.FC = () => {
         link.click()
     }
 
+    const handleAddClick = () => {
+        setModalActive(true);
+        setSelectedFileName('');
+        setCurrentWindow("create");
+        setUniqueNumber('');
+        setEDocumentType('');
+    };
+
+    const handleUpdateClick = () => {
+        setModalActive(true);
+        setSelectedFileName('');
+        setCurrentWindow("update");
+        setUniqueNumber('');
+        setEDocumentType('');
+    };
+
     return (
         <Container>
             {admin &&
@@ -335,18 +368,12 @@ const DocumentPage: React.FC = () => {
                                    onMouseOut={() => setSettingsVisibility(false)}>
                     <Settings style={{display: settingsVisibility ? "none" : "block"}} fontSize="large"/>
                     <Tooltip title="Добавить документ" placement="bottom">
-                        <Add style={{display: settingsVisibility ? "block" : "none"}} fontSize="large" onClick={() => {
-                            setModalActive(true)
-                            setSelectedFileName('')
-                            setCurrentWindow("create")
-                        }}/>
+                        <Add style={{display: settingsVisibility ? "block" : "none"}} fontSize="large"
+                             onClick={handleAddClick}/>
                     </Tooltip>
                     <Tooltip title="Изменить документ" placement="bottom">
-                        <Edit style={{display: settingsVisibility ? "block" : "none"}} fontSize="large" onClick={() => {
-                            setModalActive(true)
-                            setSelectedFileName('')
-                            setCurrentWindow("update")
-                        }}/>
+                        <Edit style={{display: settingsVisibility ? "block" : "none"}} fontSize="large"
+                              onClick={handleUpdateClick}/>
                     </Tooltip>
                     <Tooltip title="Удалить документ" placement="bottom">
                         <Delete style={{display: settingsVisibility ? "block" : "none"}} fontSize="large"
@@ -400,6 +427,7 @@ const DocumentPage: React.FC = () => {
                                         <TableCell>Документ</TableCell>
                                         <TableCell>Выполнил</TableCell>
                                         <TableCell>Тип</TableCell>
+                                        <TableCell>Регистрационный номер</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -413,6 +441,7 @@ const DocumentPage: React.FC = () => {
                                             </TableCell>
                                             <TableCell>{document.employeeDTO.surname + " " + document.employeeDTO.name + " " + document.employeeDTO.patronymic}</TableCell>
                                             <TableCell>{document.edocumentType}</TableCell>
+                                            <TableCell>{document.uniqueNumber}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -456,6 +485,19 @@ const DocumentPage: React.FC = () => {
                             <Input type="file" accept=".docx" onChange={onFileChange}/>
                             <InputFileButton>Выберите файл</InputFileButton>
                         </InputFile>
+                            <InputNew
+                                style={{marginTop: "2.5vw"}}
+                                placeholder="Уникальный номер"
+                                value={uniqueNumber}
+                                onChange={(e) => setUniqueNumber(e.target.value)}
+                                required
+                            />
+                        <InputNew
+                            placeholder="Тип документа"
+                            value={eDocumentType}
+                            onChange={(e) => setEDocumentType(e.target.value)}
+                            required
+                        />
                         <Button type="submit">Добавить</Button>
                     </Form>
                 </ModalContainer>
@@ -473,6 +515,19 @@ const DocumentPage: React.FC = () => {
                             <Input type="file" accept=".docx" onChange={onFileChange}/>
                             <InputFileButton>Выберите файл</InputFileButton>
                         </InputFile>
+                        <InputNew
+                            style={{marginTop: "2.5vw"}}
+                            placeholder="Уникальный номер"
+                            value={uniqueNumber}
+                            onChange={(e) => setUniqueNumber(e.target.value)}
+                            required
+                        />
+                        <InputNew
+                            placeholder="Тип документа"
+                            value={eDocumentType}
+                            onChange={(e) => setEDocumentType(e.target.value)}
+                            required
+                        />
                         <Button type="submit">Изменить</Button>
                     </Form>
                 </ModalContainer>

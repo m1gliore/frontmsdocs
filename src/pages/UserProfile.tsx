@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
-import {Document, TaskNode} from "../types";
+import {Document, TaskNode, User} from "../types";
 import axios from "axios";
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useLocalStorage} from "react-use";
@@ -24,6 +24,7 @@ const LeftContainer = styled.div`
   height: 76.3vh;
   width: 15vw;
   gap: 1.5vw;
+  padding: .5vw;
 `
 
 const RightContainer = styled.div`
@@ -121,6 +122,7 @@ const UserProfile: React.FC = () => {
     const [taskNodesInDone, setTaskNodesInDone] = useState<Array<TaskNode>>([])
     const [user, setUser] = useLocalStorage("user")
     const navigate = useNavigate()
+    const [userInfo, setUserInfo] = useState<User>()
 
     useEffect(() => {
         (async () => {
@@ -138,6 +140,11 @@ const UserProfile: React.FC = () => {
                 .then((res) => {
                     setTaskNodesInDone(res.data.content)
                 })
+
+            await axios.get(`http://localhost:8080/api/users/${JSON.parse(user as string)?.id}`)
+                .then((res) => {
+                    setUserInfo(res.data)
+                })
         })()
     }, [category, selectedDocument, user])
 
@@ -149,7 +156,11 @@ const UserProfile: React.FC = () => {
     return (
         <Container>
             <LeftContainer>
-                <Title>Пользователь: {JSON.parse(user as string)?.username}</Title>
+                <Title>
+                    Пользователь: {userInfo?.employeeDTO.surname + " " + userInfo?.employeeDTO.name + " " + userInfo?.employeeDTO.patronymic}
+                    <br />
+                    Имя пользователя: {userInfo?.username}
+                </Title>
                 <Button style={{backgroundColor: "red"}} onClick={() => {
                     setUser("")
                     navigate("/home")

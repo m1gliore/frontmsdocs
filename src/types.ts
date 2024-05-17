@@ -6,6 +6,7 @@ export type Document = {
     file_in_byte: string
     employeeDTO: Employee
     edocumentType: string
+    uniqueNumber: string
 }
 
 export type Employee = {
